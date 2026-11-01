@@ -1,0 +1,105 @@
+<section class="card" aria-labelledby="list-title">
+  <h2 id="list-title">Saved links</h2>
+
+  <form class="search" role="search" aria-label="Search links" (submit)="$event.preventDefault()">
+    <div class="field">
+      <label for="search-name">Name or URL</label>
+      <input id="search-name" type="search" autocomplete="off" [formField]="searchForm.name" />
+    </div>
+    <div class="field">
+      <label for="search-description">Description</label>
+      <input
+        id="search-description"
+        type="search"
+        autocomplete="off"
+        [formField]="searchForm.description"
+      />
+    </div>
+    <div class="field">
+      <label for="search-tags">Tags</label>
+      <input
+        id="search-tags"
+        type="search"
+        autocomplete="off"
+        list="known-tags"
+        [formField]="searchForm.tags"
+      />
+      <datalist id="known-tags">
+        @for (tag of allTags(); track tag) {
+          <option [value]="tag"></option>
+        }
+      </datalist>
+    </div>
+    @if (hasCriteria()) {
+      <button type="button" class="clear-search" (click)="clearSearch()">Clear search</button>
+    }
+  </form>
+
+  <div class="list-bar">
+    <p class="count" role="status">
+      @if (hasCriteria()) {
+        {{ results().length }} of {{ total() }} links match
+      } @else {
+        {{ total() }} {{ total() === 1 ? 'link' : 'links' }}
+      }
+    </p>
+    @if (pageCount() > 1) {
+      <nav class="pager" aria-label="Pages">
+        <button type="button" [disabled]="page() === 1" (click)="goToPage(page() - 1)" aria-label="Previous page">
+          ‹ Prev
+        </button>
+        <span class="pager-label" aria-live="polite">Page {{ page() }} of {{ pageCount() }}</span>
+        <button type="button" [disabled]="page() === pageCount()" (click)="goToPage(page() + 1)" aria-label="Next page">
+          Next ›
+        </button>
+      </nav>
+    }
+  </div>
+
+  <div class="viewport" #viewport>
+  @if (pageItems().length) {
+    <ul class="links">
+      @for (link of pageItems(); track link.id) {
+        <li class="link">
+          @if (link.thumbnail; as thumbnail) {
+            <img class="thumb" [ngSrc]="thumbnail" width="64" height="48" alt="" />
+          }
+          <div class="body">
+            <a class="name" [href]="link.url" target="_blank" rel="noopener noreferrer">{{ link.name }}</a>
+            <span class="url">{{ link.url }}</span>
+            @if (link.description) {
+              <p class="description">{{ link.description }}</p>
+            }
+            @if (link.tags.length) {
+              <ul class="tags" aria-label="Tags">
+                @for (tag of link.tags; track tag) {
+                  <li>
+                    <button
+                      type="button"
+                      class="tag"
+                      [attr.aria-label]="'Filter by tag ' + tag"
+                      (click)="addTagFilter(tag)"
+                    >
+                      #{{ tag }}
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+          <div class="item-actions">
+            <button type="button" [attr.aria-label]="'Edit ' + link.name" (click)="edit.emit(link)">
+              Edit
+            </button>
+            <button type="button" class="danger" [attr.aria-label]="'Delete ' + link.name" (click)="remove(link)">
+              Delete
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+  } @else if (!total()) {
+    <p class="empty">No links yet. Paste one to get started.</p>
+  }
+  </div>
+</section>

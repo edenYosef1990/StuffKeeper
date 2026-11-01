@@ -1,12 +1,17 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  template: `
+    <header class="app-header">
+      <h1>StuffKeeper</h1>
+      <p>Keep your links, named, described and tagged.</p>
+    </header>
+    <main>
+      <router-outlet />
+    </main>
+  `,
 })
-export class App {
-  protected readonly title = signal('StuffKeeper');
-}
+export class App {}

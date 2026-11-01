@@ -1,0 +1,59 @@
+:host {
+  display: flex;
+  min-height: 0;
+}
+
+.card {
+  flex: 1;
+  margin: 0;
+  overflow-y: auto;
+}
+
+.clipboard-banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 1rem;
+  border: 1px solid #f0abfc;
+  border-radius: 12px;
+  background: linear-gradient(120deg, #f3e8ff, #fce7f3, #e0f2fe);
+  animation: rise 0.35s var(--ease) both;
+}
+
+.clipboard-banner .url {
+  font-family: monospace;
+  word-break: break-all;
+}
+
+.clipboard-banner .actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.optional {
+  font-weight: normal;
+  color: var(--muted);
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.status:empty {
+  display: none;
+}

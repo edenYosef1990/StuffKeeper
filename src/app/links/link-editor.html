@@ -1,0 +1,95 @@
+<section class="card" aria-labelledby="editor-title">
+  <h2 id="editor-title">{{ editing() ? 'Edit link' : 'Add a link' }}</h2>
+
+  @if (clipboardUrl(); as url) {
+    <div class="clipboard-banner" role="status">
+      <span>Link found in clipboard: <span class="url">{{ url }}</span></span>
+      <span class="actions">
+        <button type="button" class="primary" (click)="useClipboardUrl()">Use it</button>
+        <button type="button" (click)="dismissClipboardUrl()">Dismiss</button>
+      </span>
+    </div>
+  }
+
+  <form (submit)="save($event)" novalidate>
+    <div class="field">
+      <label for="link-url">URL</label>
+      <div class="row">
+        <input
+          #urlInput
+          id="link-url"
+          type="url"
+          inputmode="url"
+          autocomplete="off"
+          placeholder="https://…"
+          [formField]="linkForm.url"
+          [attr.aria-invalid]="linkForm.url().touched() && linkForm.url().invalid()"
+          aria-describedby="link-url-errors"
+        />
+        <button type="button" (click)="pasteFromClipboard()">Paste</button>
+      </div>
+      <div id="link-url-errors" class="errors">
+        @if (linkForm.url().touched()) {
+          @for (error of linkForm.url().errors(); track error.kind) {
+            <p>{{ error.message }}</p>
+          }
+        }
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="link-name">Name</label>
+      <div class="row">
+        <input
+          id="link-name"
+          type="text"
+          autocomplete="off"
+          [formField]="linkForm.name"
+          [attr.aria-invalid]="linkForm.name().touched() && linkForm.name().invalid()"
+          aria-describedby="link-name-hint link-name-errors"
+        />
+        <button
+          type="button"
+          (click)="refreshName()"
+          [disabled]="linkForm.url().invalid() || resolvingName()"
+        >
+          Use page title
+        </button>
+      </div>
+      <p id="link-name-hint" class="hint" aria-live="polite">
+        {{ resolvingName() ? 'Looking up the page title…' : 'Suggested from the linked page’s title.' }}
+      </p>
+      <div id="link-name-errors" class="errors">
+        @if (linkForm.name().touched()) {
+          @for (error of linkForm.name().errors(); track error.kind) {
+            <p>{{ error.message }}</p>
+          }
+        }
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="link-description">Description <span class="optional">(optional)</span></label>
+      <textarea id="link-description" rows="2" [formField]="linkForm.description"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="link-tags">Tags <span class="optional">(comma-separated)</span></label>
+      <input
+        id="link-tags"
+        type="text"
+        autocomplete="off"
+        placeholder="music, recipes, to-read"
+        [formField]="linkForm.tags"
+      />
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="primary">{{ editing() ? 'Save changes' : 'Add link' }}</button>
+      <button type="button" (click)="clear()">{{ editing() ? 'Cancel' : 'Clear' }}</button>
+    </div>
+  </form>
+
+  <p class="status" role="status">{{ status() }}</p>
+  <p class="hint">Tip: press Ctrl+V anywhere on the page to paste a link.</p>
+</section>
